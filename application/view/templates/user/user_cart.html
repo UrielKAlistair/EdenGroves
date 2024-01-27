@@ -1,0 +1,81 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import rectbutton %}
+
+{% block title %}
+    <title>Cart</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <style>
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+    <script src="../../static/cart.js"></script>
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <p id="error-msg" class="mx-5 my-1 text-center text-rose-500"></p>
+    <p id="success-msg" class="mx-5 my-1 text-center text-emerald-500"></p>
+
+    <div class="flex flex-col align-middle flex-wrap">
+        <table>
+            <tr>
+                <th></th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Quantity</th>
+                <th>Product Total</th>
+                <th></th>
+            </tr>
+            {% for item in items %}
+                <tr>
+                    <td><img alt="product image" style="width:100px;height:100px"
+                             src="data:image/png;base64,{{ item.product.product_image.decode('utf-8') }}"></td>
+                    <td>{{ item.product.product_name }}</td>
+                    <td id="p{{ item.product_id }}">₹{{ item.product.product_price }}</td>
+                    <td>
+                        <form class="update-count flex flex-row justify-between" id="{{ item.product_id }}">
+
+                            <input type="number"
+                                   min="0" max="100" style="width:50px"
+                                   value="{{ item.product_quantity }}">
+
+                            <p class="flex justify-center content-center" style="height: 50px; line-height: 50px;
+                            text-align: center;">{{ item.product.product_unit }}</p>
+
+                            <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600 ">
+                                Update
+                            </button>
+
+                        </form>
+                    </td>
+                    <td id="t{{ item.product_id }}">₹{{ item.product.product_price * item.product_quantity }}</td>
+                    <td>
+                        <form method="post" class="danger-form" action="/cart">
+                            {{ del_form.csrf_token }}
+                            {{ del_form.product_id(value=item.product_id) }}
+                            <button class="{{ rectbutton() }} bg-red-500 hover:bg-rose-900">
+                                {{ del_form.submit(class="cursor-pointer") }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                <th>TOTAL:</th>
+                <th id="total-price" colspan="4">₹{{ total }}</th>
+            </tr>
+        </table>
+        {% if notempty %}
+            <div class="flex justify-center content-center">
+                <a href="/checkout" class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600 ">Check Out</a>
+            </div>
+        {% endif %}
+    </div>
+
+
+{% endblock %}

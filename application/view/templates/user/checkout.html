@@ -1,0 +1,80 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import rectbutton %}
+
+{% block title %}
+    {% if orders | length != 0 %}
+        <title> Order Placed! </title>
+    {% else %}
+        <title> Checkout </title>
+    {% endif %}
+
+    <link rel="icon" href="../../static/favicon.ico">
+    <style>
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+    <script src="../../static/cart.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    {% if unconfirmed %}
+        <p class="mx-5 my-1 text-center text-rose-500"> Please confirm the following Orders:</p>
+    {% else %}
+        {% if errors | length != 0 %}
+            <p id="error-msg" class="mx-5 my-1 text-center text-rose-500">
+                Sorry, the requested quantity of the following products is unavailable. <br>
+                {% for error in errors %}
+                    error <br>
+                {% endfor %}</p>
+        {% endif %}
+
+        {% if orders | length != 0 %}
+            <p id="success-msg" class="mx-5 my-1 text-center text-emerald-500"> The Following orders have been placed
+                successfully
+                placed</p>
+        {% endif %}
+    {% endif %}
+
+    <div class="flex flex-col align-middle flex-wrap">
+        <table>
+            <tr>
+                <th></th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Quantity</th>
+                <th>Product Total</th>
+            </tr>
+            {% for order in orders %}
+                <tr>
+                    <td><img alt="product image" style="width:100px;height:100px"
+                             src="data:image/png;base64,{{ order.product.product_image.decode('utf-8') }}"></td>
+                    <td>{{ order.product.product_name }}</td>
+                    <td>₹{{ order.product.product_price }}</td>
+                    <td>{{ order.product_quantity }} {{ order.product.product_unit }}</td>
+                    <td>₹{{ order.product.product_price * order.product_quantity }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td></td>
+                <th>TOTAL:</th>
+                <th colspan="4">₹{{ total }}</th>
+            </tr>
+        </table>
+
+        <div class="flex flex-row justify-center space-around">
+            <a href="/cart" class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600 ">Go Back</a>
+            {% if unconfirmed %}
+                <form class="flex justify-center content-center" method="post">
+                    <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600 ">Confirm Purchase</button>
+                </form>
+            {% else %}
+                <a href="/orders" class="{{ rectbutton() }} bg-emerald-500 hover:bg-emerald-800 ">Go to My Orders</a>
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock %}

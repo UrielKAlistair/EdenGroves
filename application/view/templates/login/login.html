@@ -1,0 +1,58 @@
+{% from "common/helper_scripts.html" import render_field, coolsubmit %}
+
+<!DOCTYPE html>
+<html lang="en" style="width: 100%;height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="{{ url_for('static', filename='output.css') }}" rel="stylesheet">
+    <script src={{ url_for('static', filename='login_validation.js') }}></script>
+</head>
+<body class="grid content-center bg-sky-50" style="width: 100%;height: 100%;">
+
+<div class="flex flex-row justify-evenly">
+
+    <div class="w-4/12 h-1/3 border-yellow-700">
+        <img alt="groceries under the golden sun" src="{{ url_for('static', filename='OG.png') }}">
+    </div>
+
+    <div class="flex-col items-center text-stone-900">
+
+        <h1 class="mt-10 mb-5 text-4xl font-bold text-center text-zinc-800">{% block heading %}
+            Login{% endblock %}</h1>
+
+        <div class="bg-fuchsia-50 rounded-mb border border-gray-700 ">
+
+            <p id="error-msg" class="mx-5 my-1 text-center text-rose-500">
+                {% if error %}
+                    {{ error|safe }}
+                {% endif %}
+            </p>
+
+            <form id="login-form" class="mx-5" method="post">
+                {{ form.csrf_token }}
+                <div class="mb-2">
+                    {{ form.username.label(class="mt-5 mb-2") }}
+                </div>
+                {{ render_field(form.username, placeholder="Username") }}
+
+                <div class="flex justify-between mb-2" data-te-input-wrapper-init>
+                    {{ form.password.label() }} <a href="/reset" class="text-sky-300"> Forgot Password? </a>
+                </div>
+                {{ render_field(form.password, placeholder="Password") }}
+
+                {{ coolsubmit(form) }}
+            </form>
+
+
+            <p class="mx-5 mb-5 mt-2 pt-1 text-sm font-semibold center">
+                Don't have an account? <a href="/register" class="text-sky-300"> Register Here.</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
+

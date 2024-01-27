@@ -1,0 +1,113 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import coolbluebutton,current,other, rectbutton, render_field %}
+
+{% block title %}
+    <title>Statistics</title>
+    <link rel="icon" href="../../static/icon.png">
+ <style>
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+        h1 {
+            text-align: center;
+            text-decoration: underline;
+        }
+    </style>
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+{% block references %}
+    <a href="/" class="{{ other() }}"> Home </a>
+    <a class="{{ current()}}" aria-current="page"> Statistics </a>
+    {% if (user.user_type == 'God') %}
+            <a href="/make_admins" class="{{ other() }}">Make Admins</a>
+    {% endif %}
+    <a href="/profile" class="{{ other() }}"> Profile </a>
+{% endblock %}
+
+{% block content %}
+    <h1 class="pt-3" style="font-family: 'Arvo',serif;font-size: 25px;">Time Series Analysis</h1>
+
+    <div class="flex flex-row justify-evenly pt-3">
+    <form id="new" class="flex flex-row justify-center content-center" method="post" action="/statistics?requested={{ requested|string }}&window={{ window }}&start={{start}}&end={{ end }}">
+        {{ newform.csrf_token }}
+        {{ newform.products.label(class="mx-2 my-2") }}
+        {{ render_field(newform.products, class="mx-2 my-2") }}
+        <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600">
+            {{ newform.submit(class="cursor-pointer") }}
+        </button>
+    </form>
+    </div>
+
+    <div class="flex flex-row justify-evenly">
+    <form id="remove" class="flex flex-row justify-center content-center" method="post" action="/statistics?requested={{ requested|string }}&window={{ window }}&start={{start}}&end={{ end }}">
+        {{ delform.csrf_token }}
+        {{ delform.products.label(class="mx-2 my-2") }}
+        {{ render_field(delform.products, class="mx-2 my-2" ) }}
+        <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600">
+            {{ delform.submit(class="cursor-pointer") }}
+        </button>
+    </form>
+    </div>
+
+    <div class="flex flex-row justify-evenly">
+    <form id="window" class="flex flex-row justify-center content-center" method="post" action="/statistics?requested={{ requested|string }}&window={{ window }}&start={{start}}&end={{ end }}">
+        {{ winform.csrf_token }}
+        {{ winform.window.label(class="mx-2 my-2") }}
+        {{ render_field(winform.window, class="mx-2 my-2", style="width:50px", value=window) }} <p class="mx-2 my-2"> days (Enter -1 for all time)</p>
+        <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600">
+            {{ winform.submit(class="cursor-pointer") }}
+        </button>
+    </form>
+    </div>
+
+    <img alt="time-series-sales" src="../../static/plot.png">
+
+    <hr class="my-2">
+    <h1 style="font-family: 'Arvo',serif;font-size: 25px;" class="pt-3">Days of Cover</h1>
+
+    <p class="flex justify-center py-2 my-2">
+        Choose the range of dates used to compute the Average price: <br>
+        (Recommended: Previous month/ Same month in a previous year.)
+    </p>
+
+    <div class="flex flex-row justify-evenly">
+    <form id="coverdays" class="flex flex-row justify-center content-center" method="post" action="/statistics?requested={{ requested|string }}&window={{ window }}&start={{start}}&end={{ end }}">
+        {{ coverdays.csrf_token }}
+        {{ coverdays.start.label(class="mx-2 my-2") }}
+        {{ render_field(coverdays.start, class="mx-2 my-2", value=start) }} <p class="mx-2 my-2">
+        {{ coverdays.end.label(class="mx-2 my-2") }}
+        {{ render_field(coverdays.end, class="mx-2 my-2", value=end) }} <p class="mx-2 my-2">
+        <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600">
+            {{ coverdays.submit(class="cursor-pointer") }}
+        </button>
+    </form>
+    </div>
+
+    <table style="margin-bottom:80px">
+        <tr>
+            <th> Product Name </th>
+            <th> Current Stock </th>
+            <th> Average Sales/Day </th>
+            <th> No of days before out of Stock <tr>
+        </tr>
+        {% for data in tabledata %}
+            <tr>
+                <td> {{ data[0] }}</td>
+                <td> {{ data[1] }}</td>
+                <td> {{ data[2] }}</td>
+                {% if data[3] == -1 %}
+                    <td> ∞ </td>
+                {% elif data[3] < 7 %}
+                    <td class="text-rose-500"> {{ data[3] }} </td>
+                {% else %}
+                    <td> {{ data[3] }}</td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </table>
+
+    <hr class="my-2">
+
+{% endblock %}

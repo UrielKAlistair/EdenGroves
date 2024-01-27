@@ -1,0 +1,52 @@
+{% from "common/helper_scripts.html" import render_field, coolsubmit %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link href="{{ url_for('static', filename='output.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='registration_validation.js') }}"></script>
+</head>
+<body class="grid place-content-center bg-sky-50">
+
+<h1 class="mt-10 mb-5 text-4xl font-bold text-center text-zinc-800 ">Register</h1>
+
+<div class="bg-fuchsia-50 px-3 py-3 mx-5 my-5 rounded-mb border border-gray-700">
+    {% if name_taken_error %}
+        <p class="mx-5 my-1 text-center text-rose-500">Username already taken</p>
+    {% endif %}
+    <form id="reg-form" method="post" action="/register">
+        {{ form.csrf_token }}
+
+        {{ form.username.label(class="mt-5 mb-2") }}
+        {{ render_field(form.username, placeholder="Username") }}
+
+        {{ form.email.label(class="mt-5 mb-2") }}
+        {{ render_field(form.email, placeholder="Email address", id="email") }}
+        <p id="email_error" style="white-space: pre" class="text-rose-500"></p>
+
+        {{ form.password.label(class="mt-5 mb-2") }}
+        {{ render_field(form.password, placeholder="Password", id="password") }}
+        <p id="pwd_error" style="white-space: pre" class="text-rose-500"></p>
+
+        {{ form.confirm_password.label(class="mt-5 mb-2") }}
+        {{ render_field(form.confirm_password, placeholder="Confirm password",id="confirm_password") }}
+
+        {{ coolsubmit(form) }}
+    </form>
+</div>
+
+<div class="px-3 py-3 mx-5 my-5 bg-fuchsia-50  rounded-mb border border-gray-700 ">
+    <ul>
+        <li>Ensure that the following Criteria are met by your password:</li>
+        <li>Must be between 12 and 25 characters long.</li>
+        <li>Has atleast one Uppercase letter. (A-Z)</li>
+        <li>Has atleast one Lowercase letter. (a-z)</li>
+        <li>Has atleast one number. (0-9)</li>
+        <li>Has atleast one special character. (!@#$%^&*)</li>
+        <li>Does not contain spaces.</li>
+    </ul>
+</div>
+
+</body>
+</html>

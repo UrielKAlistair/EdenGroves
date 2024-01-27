@@ -1,0 +1,66 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import coolbluebutton, coolgreenbutton, coolredbutton,solidstar %}
+
+{% block title %}
+    <title>Dashboard</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    {% if error=="0" %}
+        <p class=" mx-5 my-1 text-center text-rose-500">Delete Category Failed!</p>
+    {% elif error %}
+        <p class=" mx-5 my-1 text-center text-rose-500">Delete Product Failed!</p>
+    {% endif %}
+
+    <div class="flex align-center justify-center">
+        <a class="mx-2 px-2 my-5 {{ coolbluebutton() }}" href="/addcat">Add Categories</a>
+    </div>
+
+
+    <div class="flex flex-col align-middle flex-wrap">
+        {% for category in categories %}
+            <div class="bg-fuchsia-50 rounded-mb border border-gray-500 p-1 m-3">
+                <div class="flex flex-row">
+                    <p class="justify-center font-bold"> {{ category.category_name }}</p>
+                    <a class="mx-2 px-2 my-1 {{ coolgreenbutton() }} text-sm"
+                       href="/editcat/{{ category.category_id }}">Edit Category details</a><br>
+                    <a class="danger-button mx-2 px-2 my-1 {{ coolredbutton() }} text-sm"
+                       href="/delcat/{{ category.category_id }}">Delete Category</a>
+                </div>
+                {% if error|int ==category.category_id %}
+                    <p class=" mx-5 my-1 text-center text-rose-500">Delete Product Failed!</p>
+                {% endif %}
+                <div class="flex flex-row">
+                    {% for product in category.products %}
+                        <div class="flex flex-col bg-rose-50 rounded-mb border border-black">
+                            <img alt="product image" style="width:100px;height:100px"
+                                 src="data:image/png;base64,{{ product.product_image.decode('utf-8') }}">
+                            <p class="mx-2 my-1 text-sm"> {{ product.product_name }}</p>
+                            <p class="mx-2 my-1 text-sm"> {{ product.product_price }}/{{ product.product_unit }}</p>
+                            <p class="mx-2 my-1 text-sm flex flex-row"> Rating: {{ product.product_rating }} {{ solidstar() }}</p>
+                            <a class="mx-2 px-2 my-1 {{ coolgreenbutton() }} text-sm"
+                               href="/editproduct/{{ product.product_id }}">Edit Product details</a><br>
+                            <a class="danger-button mx-2 px-2 my-1 {{ coolredbutton() }} text-sm"
+                               href="/delproduct/{{ category.category_id }}/{{ product.product_id }}">Delete Product</a>
+                        </div>
+                    {% endfor %}
+                </div>
+                <a class="mx-2 px-2 my-1 {{ coolbluebutton() }} text-sm" href="/addproduct/{{ category.category_id }}">Add
+                    Product</a><br>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block references %}
+    <a class="{{ current() }}" aria-current="page">Home</a>
+    <a href="/statistics" class="{{ other() }}">Statistics</a>
+    {% if (user.user_type == 'God') %}
+        <a href="/make_admins" class="{{ other() }}">Make Admins</a>
+    {% endif %}
+    <a href="/profile" class="{{ other() }}">Profile</a>
+{% endblock %}

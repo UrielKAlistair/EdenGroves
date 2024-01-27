@@ -1,0 +1,58 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import rectbutton %}
+
+{% block title %}
+    <title>My Orders</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <style>
+        th, td {
+            padding: 5px;
+            text-align: center;
+        }
+    </style>
+    <script src="../../static/cart.js"></script>
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+
+{% block content %}
+    {% if success %}
+        <p id="success-msg" class="mx-5 my-1 text-center text-emerald-500"> Order placed successfully </p>
+    {% endif %}
+    <div class="flex flex-col align-middle flex-wrap">
+        <table>
+            <tr>
+                <th></th>
+                <th>Product Name</th>
+                <th>Product Price</th>
+                <th>Product Quantity</th>
+                <th>Product Total</th>
+                <th>Order ID</th>
+                <th>Order Date (dd/mm/..)</th>
+                <th>Order Status</th>
+            </tr>
+            {% for order in orders %}
+                <tr>
+                    <td><img alt="product image" style="width:100px;height:100px"
+                             src="data:image/png;base64,{{ order.product.product_image.decode('utf-8') }}"></td>
+                    <td>{{ order.product.product_name }}</td>
+                    <td>₹{{ order.product.product_price }}</td>
+                    <td>{{ order.product_quantity }}</td>
+                    <td>₹{{ order.product.product_price * order.product_quantity }}</td>
+                    <td>{{ order.order_id }}</td>
+                    <td>{{ order.order_date.strftime("%d/%m/%Y, %H:%M:%S") }}</td>
+                    <td>{{ order.order_status }}</td>
+                    <td>
+                        <form method="post" class="danger-form" action="/orders">
+                            {{ form.csrf_token }}
+                            {{ form.order_id(value=order.order_id) }}
+                            <button class="{{ rectbutton() }} bg-red-500 hover:bg-red-600">
+                                {{ form.submit(class="cursor-pointer") }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

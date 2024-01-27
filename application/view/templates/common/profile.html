@@ -1,0 +1,81 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import render_field, coolsubmit,other,current %}
+
+{% block title %}
+    <title>Update Details</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <script src="../../static/profile.js"></script>
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+{% block references %}
+    <a href="/" class="{{ other() }}">Home</a>
+
+    {% if user is not none %}
+        {% if (user.user_type == 'Admin' or user.user_type == 'God') %}
+            <a href="/statistics" class="{{ other() }}">Statistics</a>
+        {% else %}
+            <a href="/orders" class="{{ other() }}">My Orders</a>
+            <a href="/cart" class="{{ other() }}">My Cart</a>
+        {% endif %}
+
+        {% if (user.user_type == 'God') %}
+            <a href="/make_admins" class="{{ other() }}">Make Admins</a>
+        {% endif %}
+
+        <a class="{{ current() }}" aria-current="page">Profile</a>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+    <h1 class="mt-10 mb-5 text-4xl font-bold text-center text-zinc-800 ">Update Profile</h1>
+
+    <div class="px-3 py-3 mx-5 my-5 rounded-mb border border-gray-700">
+
+        <p id="error-msg" class="mx-5 my-1 text-center text-rose-500">
+            {% if error %}
+                {{ error }}
+            {% endif %}
+        </p>
+        {% if success %}
+            <p id="success-msg" class="mx-5 my-1 text-center text-emerald-500"> Details Updated Successfully</p>
+        {% endif %}
+
+        <form id="update-form" class="danger-form" method="post" action="/profile">
+            {{ form.csrf_token }}
+
+            {{ form.username.label(class="mt-5 mb-2") }}
+            {{ render_field(form.username, placeholder="Username", value=user.user_name) }}
+
+            {{ form.email.label(class="mt-5 mb-2") }}
+            {{ render_field(form.email, placeholder="Email address", value=user.user_email) }}
+            <p id="email_error" style="white-space: pre" class="text-rose-500"></p>
+
+            {{ form.old_password.label(class="mt-5 mb-2") }}
+            {{ render_field(form.old_password, placeholder="Old password") }}
+
+            {{ form.password.label(class="mt-5 mb-2") }}
+            {{ render_field(form.password, placeholder="New Password") }}
+            <p id="pwd_error" style="white-space: pre" class="text-rose-500"></p>
+
+            {{ form.confirm_password.label(class="mt-5 mb-2") }}
+            {{ render_field(form.confirm_password, placeholder="Confirm password") }}
+
+            {{ coolsubmit(form) }}
+
+            <div class="px-3 py-3 mx-5 my-5 bg-rose-50 rounded-mb border border-gray-700">
+                <ul>
+                    <li>Ensure that the following Criteria are met by your password:</li>
+                    <li>Must be between 12 and 25 characters long.</li>
+                    <li>Has atleast one Uppercase letter. (A-Z)</li>
+                    <li>Has atleast one Lowercase letter. (a-z)</li>
+                    <li>Has atleast one number. (0-9)</li>
+                    <li>Has atleast one special character. (!@#$%^&*)</li>
+                    <li>Does not contain spaces.</li>
+                </ul>
+            </div>
+
+        </form>
+    </div>
+{% endblock %}

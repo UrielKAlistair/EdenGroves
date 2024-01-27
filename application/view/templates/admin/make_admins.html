@@ -1,0 +1,46 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import render_field, other,current, rectbutton %}
+
+{% block title %}
+    <title>Grant Power</title>
+    <link rel="icon" href="../../static/icon.png">
+    <style>
+        th, td {
+            padding: 5px;
+        }
+    </style>
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+{% block references %}
+    <a href="/" class="{{ other() }}">Home</a>
+    <a href="/statistics" class="{{ other() }}">Statistics</a>
+    <a class="{{ current() }}" aria-current="page">Make Admins</a>
+    <a href="/profile" class="{{ other() }}">Profile</a>
+{% endblock %}
+
+{% block content %}
+    <table>
+        <tr>
+            <th>Username</th>
+            <th>Current Access</th>
+            <th>Change Access</th>
+        </tr>
+        {% for user in users %}
+            <tr>
+                <td>{{ user.user_name }}</td>
+                <td>{{ user.user_type }}</td>
+                <td>
+                    <form method="post" class="danger-form" action="/make_admins">
+                        {{ form.csrf_token }}
+                        {{ form.username(value=user.user_name) }}
+                        {{ form.access_level(class="text-black") }}
+                        <button class="{{ rectbutton() }} bg-blue-500 hover:bg-blue-600">
+                            {{ form.submit(class="cursor-pointer") }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

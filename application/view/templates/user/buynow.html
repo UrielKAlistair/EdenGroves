@@ -1,0 +1,51 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import render_field, coolsubmit %}
+{% from "common/helper_scripts.html" import coolbluebutton, coolgreenbutton, coolredbutton %}
+
+
+
+{% block title %}
+    <title>Buy Now</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <script src="../../static/buynow.js"></script>
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1 class="mt-10 mb-5 text-4xl font-bold text-center text-zinc-800 ">Buy Product</h1>
+
+    {% if error %}
+        <p class=" mx-5 my-1 text-center text-rose-500">{{ error }}</p>
+    {% endif %}
+
+    <div class="flex justify-center content-center">
+        <img alt="product image" class="rounded-mb border border-black" style="width:100px;height:100px"
+             src="data:image/png;base64,{{ product["product_image"]}}">
+    </div>
+
+    <div class="bg-fuchsia-50 px-3 py-3 mx-5 my-5 rounded-mb border border-gray-700">
+
+        <form class="flex flex-col danger-form" method="post"
+              {% if cart_redirect %}action="/buy/{{ product["product_id"] }}?cart_redirect=True"
+              {% else %}action="/buy/{{ product["product_id"] }}"{% endif %} enctype="multipart/form-data">
+            {{ form.csrf_token }}
+
+            <label for="name">Product Name</label>
+            <input disabled value="{{ product["product_name"] }}" id="name"
+                   class="mb-3 px-2 rounded border border-black  bg-transparent outline-none focus:placeholder:opacity-0 data-[te-input-state-active]:placeholder:opacity-100 ">
+
+            <label for="price">Price/{{ product["product_unit"] }}</label>
+            <input disabled value="{{ product["product_price"] }}" id="price"
+                   class="mb-3 px-2 rounded border border-black  bg-transparent outline-none focus:placeholder:opacity-0 data-[te-input-state-active]:placeholder:opacity-100 ">
+
+            {{ form.product_quantity.label() }}
+            {{ render_field(form.product_quantity, id="pq", min=0) }}
+
+            <label for="total">Total Price</label>
+            <input disabled id="total"
+                   class="mb-3 px-2 rounded border border-black  bg-transparent outline-none focus:placeholder:opacity-0 data-[te-input-state-active]:placeholder:opacity-100 ">
+
+            {{ coolsubmit(form) }}
+        </form>
+    </div>
+{% endblock %}

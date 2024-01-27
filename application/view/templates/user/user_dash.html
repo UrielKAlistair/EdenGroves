@@ -1,0 +1,53 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import coolredbutton, coolgreenbutton, coolbutton,solidstar %}
+
+{% block title %}
+    <title>Dashboard</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <script src="../../static/addtocart.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="flex flex-col align-middle flex-wrap">
+
+        <p id="success-msg" class="mx-5 my-1 text-center text-emerald-500"></p>
+        <p id="error-msg" class="mx-5 my-1 text-center text-rose-500"></p>
+
+        {% for category in categories %}
+            <div class="bg-rose-50 rounded-mb border border-gray-700 p-1 m-3">
+                <p> {{ category.category_name }}</p>
+                <div class="flex flex-row">
+                    {% for product in category.products %}
+                        <div class="flex flex-col bg-rose-50 rounded-mb border border-black">
+                            <img alt="product image" style="width:100px;height:100px"
+                                 src="data:image/png;base64,{{ product.product_image.decode('utf-8') }}">
+                            <p class="mx-2 my-1 text-sm"> {{ product.product_name }}</p>
+                            <p class="mx-2 my-1 text-sm"> {{ product.product_price }}/{{ product.product_unit }}</p>
+                            <p class="mx-2 my-1 text-sm flex flex-row"> Rating: {{ product.product_rating }} {{ solidstar() }}</p>
+                            {% if product.product_stock == 0 %}
+                                <a class="{{ coolbutton() }} bg-gray-400 text-black">Out of Stock</a>
+                                <a class="{{ coolbutton() }} bg-gray-400 text-black">Out Of Stock</a>
+                            {% else %}
+                                <button onclick="addToCart({{ product.product_id }})" class="{{ coolgreenbutton() }}">Add to
+                                    Cart</button>
+                                <a href="/buy/{{ product.product_id }}" class="{{ coolredbutton() }}">Buy Now</a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
+
+{% block references %}
+    <a class="{{ current() }}" aria-current="page">Home</a>
+    {% if user is not none %}
+        <a href="/orders" class="{{ other() }}">My Orders</a>
+        <a href="/cart" class="{{ other() }}">My Cart</a>
+        <a href="/profile" class="{{ other() }}">Profile</a>
+    {% endif %}
+{% endblock %}

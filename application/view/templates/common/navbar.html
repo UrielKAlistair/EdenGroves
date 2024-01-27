@@ -1,0 +1,99 @@
+{% from "common/helper_scripts.html" import coolbluebutton,current,other %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    {% block title %}
+        <title>Title</title>
+        <link rel="icon" href="../../static/favicon.ico">
+    {% endblock %}
+
+    <link href="{{ url_for('static', filename='output.css') }}" rel="stylesheet">
+</head>
+<body class="grid place-content-center bg-pink-50 text-sm">
+<div style="margin-bottom: 70px">Stay outta the bar!</div>
+<nav class="px-2 py-2.5 fixed w-full bg-gray-800 border-b border-gray-200">
+    <div class="flex justify-between">
+        {# Logo #}
+        <div class="flex flex-row">
+            <img src="../../static/sitename.png" class="rounded mr-3" alt="site name" style="height:60px">
+            <img style="width: 60px;height: 60px" class="rounded-full mr-3" src="../../static/logo.png"
+                 alt="Website Logo">
+        </div>
+        {# Search bar #}
+        {# Search box #}
+        <form action="/search" class="flex w-4/12">
+            <input
+                    name="q"
+                    type="search"
+                    class="w-full text-white rounded-l bg-transparent border border-solid border-neutral-300 px-3 py-1.5 text-base font-normal outline-none focus:border-primary focus:shadow-te-primary"
+                    placeholder="Search"
+                    aria-label="Search"
+                    aria-describedby="search-button"/>
+            {# Search Button #}
+            <button type="submit"
+                    class="rounded-r bg-zinc-400 px-2 py-2.5 leading-tight transition ease-out delay-50 hover:-translate-y-0.5 hover:scale-110 hover:bg-primary-700 hover:shadow-lg focus:bg-primary-700 focus:shadow-lg"
+                    type="button"
+                    id="search-button">
+                <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="h-5 w-5">
+                    <path
+                            fill-rule="evenodd"
+                            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
+                            clip-rule="evenodd"></path>
+                </svg>
+            </button>
+        </form>
+
+
+        <div class="flex">
+            {# Navigation Links #}
+            <div class="flex content-center items-center px-3 w-full md:w-auto  mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-pink-50"
+                 id="navbar-sticky">
+
+                {% block references %}
+                    <a href="/" class="{{ other() }}">Home</a>
+
+                    {% if user is not none %}
+                        {% if (user.user_type == 'Admin' or user.user_type == 'God') %}
+                            <a href="/statistics" class="{{ other() }}">Statistics</a>
+                        {% else %}
+                            <a href="/orders" class="{{ other() }}">My Orders</a>
+                            <a href="/cart" class="{{ other() }}">My Cart</a>
+                        {% endif %}
+
+                        {% if (user.user_type == 'God') %}
+                            <a href="/make_admins" class="{{ other() }}">Make Admins</a>
+                        {% endif %}
+
+                        <a href="/profile" class="{{ other() }}">Profile</a>
+                    {% endif %}
+                {% endblock %}
+            </div>
+
+
+            {# Login button/Profile pic #}
+            <div class="content-end flex">
+                {% if not user %}
+                    {# Login button #}
+
+                    <a class="mx-2 px-2 my-5 {{ coolbluebutton() }}" href="/login">Login</a>
+
+                {% else %}
+                    <p class="mx-2 mt-4 text-pink-50">Welcome, {{ user.user_name }}</p>
+                    <a class="mx-2 px-2 my-5 {{ coolbluebutton() }}" href="/logout">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% block content %}
+{% endblock %}
+
+</body>
+</html>

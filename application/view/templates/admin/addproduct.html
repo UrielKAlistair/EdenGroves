@@ -1,0 +1,47 @@
+{% extends "common/navbar.html" %}
+{% from "common/helper_scripts.html" import render_field, coolsubmit %}
+{% from "common/helper_scripts.html" import coolbluebutton, coolgreenbutton, coolredbutton %}
+
+{% block title %}
+    <title>Add Product</title>
+    <link rel="icon" href="../../static/favicon.ico">
+    <script src="../../static/confirmation.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1 class="mt-10 mb-5 text-4xl font-bold text-center text-zinc-800 ">Add Product</h1>
+
+<div class="bg-fuchsia-50 px-3 py-3 mx-5 my-5 rounded-mb border border-gray-700">
+
+    <p class="mx-5 my-1 text-center text-rose-500">
+    {% if error=="400" %}
+        Empty Required fields.
+    {% elif error=="409" %}
+        Product already exists.
+    {% elif error=="500" %}
+        We are experiencing some issues. Please Try again later.
+    {% endif %}
+    </p>
+
+    <form method="post" class="danger-form" action="/addproduct/{{cat_id}}" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+
+        {{ form.product_name.label }}
+        {{ render_field(form.product_name) }}
+
+        {{ form.product_price.label }}
+        {{ render_field(form.product_price) }}
+
+        {{ form.product_unit.label }}
+        {{ render_field(form.product_unit) }}
+
+        {{ form.product_stock.label }}
+        {{ render_field(form.product_stock) }}
+
+        {{ form.product_image.label }}
+        {{ render_field(form.product_image) }}
+
+        {{ coolsubmit(form) }}
+    </form>
+</div>
+{% endblock %}
